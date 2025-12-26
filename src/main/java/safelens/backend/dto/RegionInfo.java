@@ -1,0 +1,29 @@
+package safelens.backend.dto;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import safelens.backend.domain.Detect.CategoryType;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+public class RegionInfo {
+
+    @NotNull(message = "category는 필수입니다")
+    private CategoryType category;
+
+    @NotNull(message = "x 좌표는 필수입니다")
+    private Integer x;
+
+    @NotNull(message = "y 좌표는 필수입니다")
+    private Integer y;
+
+    @NotNull(message = "width는 필수입니다")
+    private Integer width;
+
+    @NotNull(message = "height는 필수입니다")
+    private Integer height;
+}
