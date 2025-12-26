@@ -15,6 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:8081",
                         "http://192.168.68.194:8080/"
                 )
+                .allowedOriginPatterns("chrome-extension://*")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true)
