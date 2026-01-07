@@ -65,7 +65,6 @@
 ```json
 {
   "imageUuid": "7a2f4c5e-1234-4c3d-9b8a-abcdef123456",
-  "memberId": 1,
   "regions": [
     {
       "x": 120,
