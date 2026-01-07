@@ -16,14 +16,23 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     open-in-view: false
+
+  web:
+    error:
+      include-message: always         # 에러 메시지 포함
+      include-binding-errors: always  # Validation 에러(errors 필드) 포함
 
 image-server:
   url: ${IMAGE_SERVER_URL:http://localhost:8081}
   timeout:
     connect: 5000
     read: 10000
+
+jwt:
+  secret: ${JWT_SECRET:your-256-bit-secret-key-change-in-production-please}
+  expiration: 86400000  # 24시간 (밀리초)
 
 logging:
   pattern:

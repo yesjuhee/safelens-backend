@@ -36,6 +36,12 @@ public class Member {
     @Column
     private String nickname;
 
+    @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
     @CreatedDate
     @Column
     private LocalDateTime createdAt;
