@@ -27,12 +27,7 @@ public class EditController {
                                                   @AuthMember Member member) {
         log.info("POST /edit 요청 - imageUuid: {}, memberId: {}", request.getImageUuid(), member.getId());
 
-        try {
-            EditResponse response = editService.editImage(request, member);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("이미지 편집 요청 처리 중 오류 발생", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        EditResponse response = editService.editImage(request, member);
+        return ResponseEntity.ok(response);
     }
 }

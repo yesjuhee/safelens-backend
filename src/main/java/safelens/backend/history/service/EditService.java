@@ -5,9 +5,13 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
+import safelens.backend.global.util.ImageUrlUtil;
 import safelens.backend.history.domain.Detect;
 import safelens.backend.history.domain.History;
 import safelens.backend.history.domain.History.FilterType;
@@ -68,37 +72,36 @@ public class EditService {
 
         // 3. Image Server 호출
         try {
-//            ResponseEntity<ImageServerAnonymizeResponse> response = restTemplate.postForEntity(
-//                    imageServerUrl + "/anonymize",
-//                    anonymizeRequest,
-//                    ImageServerAnonymizeResponse.class
-//            );
-//
-//            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-//                throw new RuntimeException("Image Server가 정상 응답을 반환하지 않았습니다");
-//            }
-//
-//            ImageServerAnonymizeResponse serverResponse = response.getBody();
-//
-//            // 디버깅: 응답 내용 로깅
-//            logAnonymizeResponse(serverResponse);
-//
-//            if (!serverResponse.getSuccess()) {
-//                throw new RuntimeException("이미지 편집에 실패했습니다: " + serverResponse.getMessage());
-//            }
-//
-//            String newUuid = serverResponse.getAnonymizedImageId();
-//            String newUrl = ImageUrlUtil.toImageUrl(newUuid);
-//
-//            log.info("이미지 편집 완료 - oldUuid: {}, newUuid: {}, 처리 영역: {}",
-//                    serverResponse.getOriginalImageId(), newUuid, serverResponse.getProcessedCount());
+            ResponseEntity<ImageServerAnonymizeResponse> response = restTemplate.postForEntity(
+                    imageServerUrl + "/anonymize",
+                    anonymizeRequest,
+                    ImageServerAnonymizeResponse.class
+            );
+
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                throw new RuntimeException("Image Server가 정상 응답을 반환하지 않았습니다");
+            }
+
+            ImageServerAnonymizeResponse serverResponse = response.getBody();
+
+            // 디버깅: 응답 내용 로깅
+            logAnonymizeResponse(serverResponse);
+
+            if (!serverResponse.getSuccess()) {
+                throw new RuntimeException("이미지 편집에 실패했습니다: " + serverResponse.getMessage());
+            }
+
+            String newUuid = serverResponse.getAnonymizedImageId();
+            String newUrl = ImageUrlUtil.toImageUrl(newUuid);
+
+            log.info("이미지 편집 완료 - oldUuid: {}, newUuid: {}, 처리 영역: {}",
+                    serverResponse.getOriginalImageId(), newUuid, serverResponse.getProcessedCount());
 
             // 4. History 엔티티 생성 및 저장
             History history = History.builder()
                     .member(authMember)
                     .oldUuid(request.getImageUuid())
-//                    .newUuid(newUuid)
-                    .newUuid("test")
+                    .newUuid(newUuid)
                     .filter(request.getFilter())
                     .build();
 
@@ -133,8 +136,7 @@ public class EditService {
 
             return new EditResponse(
                     savedHistory.getId(),
-//                    newUrl,
-                    "test",
+                    newUrl,
                     savedHistory.getOldUuid(),
                     savedHistory.getNewUuid(),
                     savedHistory.getFilter(),
@@ -144,7 +146,7 @@ public class EditService {
 
         } catch (Exception e) {
             log.error("Image Server 호출 중 오류 발생", e);
-            throw new RuntimeException("이미지 편집에 실패했습니다", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 편집에 실패했습니다", e);
         }
     }
 

@@ -5,13 +5,15 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import safelens.backend.history.domain.Detect.CategoryType;
+import safelens.backend.history.dto.DetectionInfo;
 import safelens.backend.image.dto.DetectRequest;
 import safelens.backend.image.dto.DetectResponse;
-import safelens.backend.history.dto.DetectionInfo;
 import safelens.backend.image.dto.imageserver.FaceDetection;
 import safelens.backend.image.dto.imageserver.ImageServerDetectResponse;
 import safelens.backend.image.dto.imageserver.PIIDetection;
@@ -65,7 +67,7 @@ public class DetectService {
 
         } catch (Exception e) {
             log.error("Image Server 호출 중 오류 발생", e);
-            throw new RuntimeException("개인정보 감지에 실패했습니다", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "개인정보 감지에 실패했습니다", e);
         }
     }
 

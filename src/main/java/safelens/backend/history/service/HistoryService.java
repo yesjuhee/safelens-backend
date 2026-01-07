@@ -40,7 +40,8 @@ public class HistoryService {
 
         // 1. Member 조회
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found: " + memberId));
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Member not found: " + memberId));
 
         // 2. Member의 모든 History 조회 (최신순)
         List<History> histories = historyRepository.findByMemberOrderByCreatedAtDesc(member);
@@ -56,6 +57,44 @@ public class HistoryService {
                 member.getNickname(),
                 histories.size(),
                 historyDetails
+        );
+    }
+
+    /**
+     * 단일 히스토리 상세 조회
+     */
+    @Transactional(readOnly = true)
+    public HistoryDetailResponse getHistoryDetail(Long historyId, Member authMember) {
+        log.info("히스토리 상세 조회 시작 - historyId: {}", historyId);
+
+        // 1. History 조회
+        History history = historyRepository.findById(historyId)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "History not found: " + historyId)
+                );
+
+        if (!history.getMember().getId().equals(authMember.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인 히스토리만 조회할 수 있습니다");
+        }
+
+        // 2. Detection 정보 변환
+        List<DetectionDetailInfo> detections = history.getDetects().stream()
+                .map(this::convertToDetectionDetailInfo)
+                .collect(Collectors.toList());
+
+        // 3. 편집된 이미지 URL 생성 (quality=low 파라미터 추가)
+        String editedImageUrl = ImageUrlUtil.toImageUrl(history.getNewUuid()) + "?quality=low";
+
+        log.info("히스토리 상세 조회 완료 - historyId: {}, memberId: {}", historyId, history.getMember().getId());
+
+        return new HistoryDetailResponse(
+                history.getId(),
+                history.getMember().getId(),
+                history.getOldUuid(),
+                editedImageUrl,
+                history.getFilter(),
+                history.getCreatedAt(),
+                detections
         );
     }
 
@@ -95,42 +134,6 @@ public class HistoryService {
                 detect.getY(),
                 detect.getWidth(),
                 detect.getHeight()
-        );
-    }
-
-    /**
-     * 단일 히스토리 상세 조회
-     */
-    @Transactional(readOnly = true)
-    public HistoryDetailResponse getHistoryDetail(Long historyId, Member authMember) {
-        log.info("히스토리 상세 조회 시작 - historyId: {}", historyId);
-
-        // 1. History 조회
-        History history = historyRepository.findById(historyId)
-                .orElseThrow(() -> new RuntimeException("History not found: " + historyId));
-
-        if (!history.getMember().getId().equals(authMember.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인 히스토리만 조회할 수 있습니다");
-        }
-
-        // 2. Detection 정보 변환
-        List<DetectionDetailInfo> detections = history.getDetects().stream()
-                .map(this::convertToDetectionDetailInfo)
-                .collect(Collectors.toList());
-
-        // 3. 편집된 이미지 URL 생성 (quality=low 파라미터 추가)
-        String editedImageUrl = ImageUrlUtil.toImageUrl(history.getNewUuid()) + "?quality=low";
-
-        log.info("히스토리 상세 조회 완료 - historyId: {}, memberId: {}", historyId, history.getMember().getId());
-
-        return new HistoryDetailResponse(
-                history.getId(),
-                history.getMember().getId(),
-                history.getOldUuid(),
-                editedImageUrl,
-                history.getFilter(),
-                history.getCreatedAt(),
-                detections
         );
     }
 }

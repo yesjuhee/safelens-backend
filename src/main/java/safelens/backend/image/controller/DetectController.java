@@ -27,12 +27,7 @@ public class DetectController {
                                                              @AuthMember Member member) {
         log.info("POST /detect 요청 - imageUuid: {}, memberId: {}", request.getImageUuid(), member.getId());
 
-        try {
-            DetectResponse response = detectService.detectPersonalInfo(request);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("감지 요청 처리 중 오류 발생", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        DetectResponse response = detectService.detectPersonalInfo(request);
+        return ResponseEntity.ok(response);
     }
 }

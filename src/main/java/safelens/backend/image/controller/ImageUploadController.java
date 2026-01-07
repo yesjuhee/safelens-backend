@@ -26,12 +26,7 @@ public class ImageUploadController {
                                                            @AuthMember Member member) {
         log.info("POST /images/upload 요청 - 파일명: {}, memberId: {}", file.getOriginalFilename(), member.getId());
 
-        try {
-            ImageUploadResponse response = imageUploadService.uploadImage(file);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("이미지 업로드 중 오류 발생", e);
-            return ResponseEntity.badRequest().build();
-        }
+        ImageUploadResponse response = imageUploadService.uploadImage(file);
+        return ResponseEntity.ok(response);
     }
 }

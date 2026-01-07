@@ -26,13 +26,8 @@ public class HistoryController {
                                                         @AuthMember Member member) {
         log.info("GET /history/{} 요청 by memberId {}", memberId, member.getId());
 
-        try {
-            HistoryResponse response = historyService.getHistoriesByMemberId(memberId, member);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("히스토리 조회 중 오류 발생", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        HistoryResponse response = historyService.getHistoriesByMemberId(memberId, member);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/detail/{historyId}")
@@ -40,12 +35,7 @@ public class HistoryController {
                                                                   @AuthMember Member member) {
         log.info("GET /history/detail/{} 요청 by memberId {}", historyId, member.getId());
 
-        try {
-            HistoryDetailResponse response = historyService.getHistoryDetail(historyId, member);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("히스토리 상세 조회 중 오류 발생", e);
-            return ResponseEntity.internalServerError().build();
-        }
+        HistoryDetailResponse response = historyService.getHistoryDetail(historyId, member);
+        return ResponseEntity.ok(response);
     }
 }

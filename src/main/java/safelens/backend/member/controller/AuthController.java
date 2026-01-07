@@ -26,13 +26,8 @@ public class AuthController {
     public ResponseEntity<AuthResponse> signup(@Valid @RequestBody SignupRequest request) {
         log.info("POST /auth/signup - username: {}", request.getUsername());
 
-        try {
-            AuthResponse response = authService.signup(request);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("회원가입 실패", e);
-            return ResponseEntity.badRequest().build();
-        }
+        AuthResponse response = authService.signup(request);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
