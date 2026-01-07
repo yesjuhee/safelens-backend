@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import safelens.backend.global.auth.AuthMember;
 import safelens.backend.image.dto.DetectRequest;
 import safelens.backend.image.dto.DetectResponse;
 import safelens.backend.image.service.DetectService;
+import safelens.backend.member.domain.Member;
 
 @Slf4j
 @RestController
@@ -21,8 +23,9 @@ public class DetectController {
     private final DetectService detectService;
 
     @PostMapping
-    public ResponseEntity<DetectResponse> detectPersonalInfo(@Valid @RequestBody DetectRequest request) {
-        log.info("POST /detect 요청 - imageUuid: {}", request.getImageUuid());
+    public ResponseEntity<DetectResponse> detectPersonalInfo(@Valid @RequestBody DetectRequest request,
+                                                             @AuthMember Member member) {
+        log.info("POST /detect 요청 - imageUuid: {}, memberId: {}", request.getImageUuid(), member.getId());
 
         try {
             DetectResponse response = detectService.detectPersonalInfo(request);

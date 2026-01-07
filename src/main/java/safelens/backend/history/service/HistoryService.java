@@ -1,22 +1,23 @@
 package safelens.backend.history.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import safelens.backend.global.util.ImageUrlUtil;
 import safelens.backend.history.domain.Detect;
 import safelens.backend.history.domain.History;
-import safelens.backend.member.domain.Member;
 import safelens.backend.history.dto.DetectionDetailInfo;
 import safelens.backend.history.dto.HistoryDetailInfo;
 import safelens.backend.history.dto.HistoryDetailResponse;
 import safelens.backend.history.dto.HistoryResponse;
 import safelens.backend.history.repository.HistoryRepository;
+import safelens.backend.member.domain.Member;
 import safelens.backend.member.repository.MemberRepository;
-import safelens.backend.global.util.ImageUrlUtil;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,8 +31,12 @@ public class HistoryService {
      * 특정 사용자의 전체 편집 히스토리 조회
      */
     @Transactional(readOnly = true)
-    public HistoryResponse getHistoriesByMemberId(Long memberId) {
+    public HistoryResponse getHistoriesByMemberId(Long memberId, Member authMember) {
         log.info("히스토리 조회 시작 - memberId: {}", memberId);
+
+        if (!authMember.getId().equals(memberId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인 히스토리만 조회할 수 있습니다");
+        }
 
         // 1. Member 조회
         Member member = memberRepository.findById(memberId)
@@ -97,12 +102,16 @@ public class HistoryService {
      * 단일 히스토리 상세 조회
      */
     @Transactional(readOnly = true)
-    public HistoryDetailResponse getHistoryDetail(Long historyId) {
+    public HistoryDetailResponse getHistoryDetail(Long historyId, Member authMember) {
         log.info("히스토리 상세 조회 시작 - historyId: {}", historyId);
 
         // 1. History 조회
         History history = historyRepository.findById(historyId)
                 .orElseThrow(() -> new RuntimeException("History not found: " + historyId));
+
+        if (!history.getMember().getId().equals(authMember.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인 히스토리만 조회할 수 있습니다");
+        }
 
         // 2. Detection 정보 변환
         List<DetectionDetailInfo> detections = history.getDetects().stream()

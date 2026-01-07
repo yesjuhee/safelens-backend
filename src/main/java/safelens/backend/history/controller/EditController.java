@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import safelens.backend.global.auth.AuthMember;
 import safelens.backend.history.dto.EditRequest;
 import safelens.backend.history.dto.EditResponse;
 import safelens.backend.history.service.EditService;
+import safelens.backend.member.domain.Member;
 
 @Slf4j
 @RestController
@@ -21,11 +23,12 @@ public class EditController {
     private final EditService editService;
 
     @PostMapping
-    public ResponseEntity<EditResponse> editImage(@Valid @RequestBody EditRequest request) {
-        log.info("POST /edit 요청 - imageUuid: {}, memberId: {}", request.getImageUuid(), request.getMemberId());
+    public ResponseEntity<EditResponse> editImage(@Valid @RequestBody EditRequest request,
+                                                  @AuthMember Member member) {
+        log.info("POST /edit 요청 - imageUuid: {}, memberId: {}", request.getImageUuid(), member.getId());
 
         try {
-            EditResponse response = editService.editImage(request);
+            EditResponse response = editService.editImage(request, member);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("이미지 편집 요청 처리 중 오류 발생", e);
