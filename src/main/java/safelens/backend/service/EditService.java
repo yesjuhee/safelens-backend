@@ -60,7 +60,7 @@ public class EditService {
                             region.getWidth(),
                             region.getHeight()
                     );
-                    return new ImageServerBboxWithLabel(bbox, mapCategoryToType(region.getCategory()));
+                    return new ImageServerBboxWithLabel(bbox, region.getPiiType());
                 })
                 .collect(Collectors.toList());
 
@@ -128,13 +128,14 @@ public class EditService {
             log.info("History 저장 완료 - historyId: {}", savedHistory.getId());
 
             // 7. 응답 생성
-            List<EditedRegionInfo> editedRegions = savedHistory.getDetects().stream()
-                    .map(detect -> new EditedRegionInfo(
-                            detect.getX(),
-                            detect.getY(),
-                            detect.getWidth(),
-                            detect.getHeight(),
-                            detect.getCategory()
+            List<EditedRegionInfo> editedRegions = request.getRegions().stream()
+                    .map(region -> new EditedRegionInfo(
+                            region.getX(),
+                            region.getY(),
+                            region.getWidth(),
+                            region.getHeight(),
+                            region.getCategory(),
+                            region.getPiiType()
                     ))
                     .collect(Collectors.toList());
 

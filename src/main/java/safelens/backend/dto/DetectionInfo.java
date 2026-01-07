@@ -1,5 +1,6 @@
 package safelens.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,10 @@ import safelens.backend.domain.Detect.CategoryType;
 public class DetectionInfo {
 
     private CategoryType category;
+
+    @JsonProperty("pii_type")
+    private String piiType;
+
     private Integer x;
     private Integer y;
     private Integer width;

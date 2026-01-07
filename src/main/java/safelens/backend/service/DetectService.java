@@ -86,6 +86,7 @@ public class DetectService {
             if (detectTargets.contains(category)) {
                 allDetections.add(new DetectionInfo(
                         category,
+                        pii.getPiiType(),
                         pii.getBbox().getX(),
                         pii.getBbox().getY(),
                         pii.getBbox().getWidth(),
@@ -99,6 +100,7 @@ public class DetectService {
             for (FaceDetection face : imageServerResponse.getFaceDetections()) {
                 allDetections.add(new DetectionInfo(
                         CategoryType.FACE,
+                        "face",
                         face.getBbox().getX(),
                         face.getBbox().getY(),
                         face.getBbox().getWidth(),
