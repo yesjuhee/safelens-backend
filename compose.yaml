@@ -1,19 +1,18 @@
 name: safelens
 
 services:
-#  app:
-#    build: .
-#    container_name: app
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      SPRING_PROFILES_ACTIVE: new
-#      SPRING_DATASOURCE_URL_NEW: ${SPRING_DATASOURCE_URL_NEW}
-#      SPRING_DATASOURCE_USERNAME_NEW: ${SPRING_DATASOURCE_USERNAME_NEW}
-#      SPRING_DATASOURCE_PASSWORD_NEW: ${SPRING_DATASOURCE_PASSWORD_NEW}
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      #      SPRING_PROFILES_ACTIVE: new
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
   db:
     image: mysql:8.4
     restart: always

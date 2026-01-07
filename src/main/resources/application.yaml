@@ -7,9 +7,9 @@ spring:
       max-request-size: 10MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:13306/safelens?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul # 배포 시 변경 필요
-    username: root
-    password: root
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:13306/safelens?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:root}
   jpa:
     show-sql: false
     properties:
@@ -19,14 +19,12 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
-# Image Server 설정 (실제 Image Server 연동 시 사용)
 image-server:
-  url: http://192.168.68.174:8000/
+  url: ${IMAGE_SERVER_URL:http://localhost:8081}
   timeout:
     connect: 5000
     read: 10000
 
-# 로깅 설정
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(%-5level) - %msg [%thread]%n"
