@@ -9,22 +9,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import safelens.backend.global.util.ImageUrlUtil;
 import safelens.backend.history.domain.Detect;
 import safelens.backend.history.domain.Detect.CategoryType;
 import safelens.backend.history.domain.History;
 import safelens.backend.history.domain.History.FilterType;
-import safelens.backend.member.domain.Member;
 import safelens.backend.history.dto.EditRequest;
 import safelens.backend.history.dto.EditResponse;
 import safelens.backend.history.dto.EditedRegionInfo;
 import safelens.backend.history.dto.RegionInfo;
+import safelens.backend.history.repository.HistoryRepository;
 import safelens.backend.image.dto.imageserver.ImageServerAnonymizeRequest;
 import safelens.backend.image.dto.imageserver.ImageServerAnonymizeResponse;
 import safelens.backend.image.dto.imageserver.ImageServerBboxWithLabel;
 import safelens.backend.image.dto.imageserver.ImageServerBoundingBox;
-import safelens.backend.history.repository.HistoryRepository;
+import safelens.backend.member.domain.Member;
 import safelens.backend.member.repository.MemberRepository;
-import safelens.backend.global.util.ImageUrlUtil;
 
 @Slf4j
 @Service
@@ -48,7 +48,7 @@ public class EditService {
         log.info("편집 영역 개수: {}, 필터: {}", request.getRegions().size(), request.getFilter());
 
         // 1. Member 조회
-        Member member = memberRepository.findById(1L)
+        Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new RuntimeException("Member not found: " + request.getMemberId()));
 
         // 2. 이미지 서버 요청 준비

@@ -62,7 +62,6 @@ public class History {
     @Builder.Default
     private List<Detect> detects = new ArrayList<>();
 
-    // 양방향 관계 편의 메서드
     public void addDetect(Detect detect) {
         this.detects.add(detect);
     }
