@@ -41,7 +41,8 @@ public class HistoryService {
         // 1. Member 조회
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Member not found: " + memberId));
+                        () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Member not found: " + memberId)
+                );
 
         // 2. Member의 모든 History 조회 (최신순)
         List<History> histories = historyRepository.findByMemberOrderByCreatedAtDesc(member);

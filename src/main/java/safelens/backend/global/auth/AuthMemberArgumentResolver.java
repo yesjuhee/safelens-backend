@@ -2,6 +2,7 @@ package safelens.backend.global.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -23,17 +24,18 @@ public class AuthMemberArgumentResolver implements HandlerMethodArgumentResolver
     private final MemberRepository memberRepository;
 
     @Override
-    public boolean supportsParameter(org.springframework.core.MethodParameter parameter) {
+    public boolean supportsParameter(MethodParameter parameter) {
         return parameter.hasParameterAnnotation(AuthMember.class)
                 && Member.class.isAssignableFrom(parameter.getParameterType());
     }
 
     @Override
-    public Object resolveArgument(org.springframework.core.MethodParameter parameter,
-                                  ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest,
-                                  WebDataBinderFactory binderFactory) {
-
+    public Object resolveArgument(
+            MethodParameter parameter,
+            ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest,
+            WebDataBinderFactory binderFactory
+    ) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String authHeader = request.getHeader("Authorization");
 
@@ -49,7 +51,9 @@ public class AuthMemberArgumentResolver implements HandlerMethodArgumentResolver
 
         String username = jwtUtil.getUsernameFromToken(token);
         return memberRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Member not found for token"));
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Member not found for token")
+                );
     }
 }
 
