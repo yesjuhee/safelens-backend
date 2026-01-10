@@ -23,6 +23,6 @@ public class ImageUrlUtil {
         if (uuid == null || uuid.isBlank()) {
             return null;
         }
-        return imageServerUrl + "download/" + uuid;
+        return imageServerUrl + "/download/" + uuid;
     }
 }
