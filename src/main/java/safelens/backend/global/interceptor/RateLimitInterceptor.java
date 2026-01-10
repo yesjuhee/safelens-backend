@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import safelens.backend.global.ratelimit.RateLimitProperties;
@@ -21,8 +22,8 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request,
-                              HttpServletResponse response,
-                              Object handler) throws Exception {
+                             HttpServletResponse response,
+                             Object handler) throws Exception {
 
         String requestURI = request.getRequestURI();
 
@@ -74,7 +75,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     private void handleRateLimitExceeded(HttpServletResponse response) throws Exception {
         log.warn("Rate limit 초과 - 429 응답 반환");
 
-        response.setStatus(HttpServletResponse.SC_TOO_MANY_REQUESTS);
+        response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
         response.setContentType("application/json;charset=UTF-8");
 
         // Retry-After 헤더 추가 (다음 정시까지 초 단위)

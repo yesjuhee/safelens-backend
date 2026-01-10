@@ -119,4 +119,40 @@ public class RateLimitService {
                 .withNano(0);
         return Duration.between(now, midnight).getSeconds();
     }
+
+    /**
+     * 현재 Rate Limit 상태 조회
+     */
+    public RateLimitStatusResponse getStatus() {
+        LocalDateTime now = LocalDateTime.now(ZONE_SEOUL);
+
+        // 시간당 키 조회
+        String hourlyKey = String.format(HOURLY_KEY_FORMAT, now.format(HOURLY_FORMATTER));
+        int hourlyUsed = getCurrentUsage(hourlyKey);
+        long hourlyResetSeconds = getSecondsUntilNextHour(now);
+
+        // 일당 키 조회
+        String dailyKey = String.format(DAILY_KEY_FORMAT, now.format(DAILY_FORMATTER));
+        int dailyUsed = getCurrentUsage(dailyKey);
+        long dailyResetSeconds = getSecondsUntilMidnight(now);
+
+        return new RateLimitStatusResponse(
+                hourlyUsed,
+                properties.getHourlyLimit(),
+                properties.getHourlyLimit() - hourlyUsed,
+                hourlyResetSeconds,
+                dailyUsed,
+                properties.getDailyLimit(),
+                properties.getDailyLimit() - dailyUsed,
+                dailyResetSeconds
+        );
+    }
+
+    /**
+     * Redis에서 현재 사용량 조회
+     */
+    private int getCurrentUsage(String key) {
+        String value = redisTemplate.opsForValue().get(key);
+        return value != null ? Integer.parseInt(value) : 0;
+    }
 }
