@@ -23,6 +23,7 @@ public class ImageUrlUtil {
         if (uuid == null || uuid.isBlank()) {
             return null;
         }
-        return imageServerUrl + "/download/" + uuid;
+        String baseUrl = imageServerUrl.endsWith("/") ? imageServerUrl : imageServerUrl + "/";
+        return baseUrl + "download/" + uuid;
     }
 }
