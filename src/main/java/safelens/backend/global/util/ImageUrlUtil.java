@@ -1,14 +1,11 @@
 package safelens.backend.global.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ImageUrlUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(ImageUrlUtil.class);
     private static String imageServerUrl;
 
     @Value("${image-server.url}")
@@ -27,7 +24,6 @@ public class ImageUrlUtil {
             return null;
         }
         String baseUrl = imageServerUrl.endsWith("/") ? imageServerUrl : imageServerUrl + "/";
-        log.debug("ImageUrlUtil - baseUrl: {}, uuid: {}", baseUrl, uuid);
         
         return baseUrl + "download/" + uuid;
     }
