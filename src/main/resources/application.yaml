@@ -19,6 +19,19 @@ spring:
       ddl-auto: update
     open-in-view: false
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
   web:
     error:
       include-message: always         # 에러 메시지 포함
@@ -40,3 +53,13 @@ logging:
   level:
     safelens.backend: DEBUG
     org.springframework.web: INFO
+
+# Rate Limit 설정
+rate-limit:
+  enabled: true
+  hourly-limit: 400    # 시간당 포인트 (edit 20회 상당)
+  daily-limit: 2000    # 일당 포인트 (edit 100회 상당)
+  api-costs:
+    upload: 0
+    detect: 1
+    edit: 20
